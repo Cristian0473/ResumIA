@@ -3,7 +3,11 @@
 env/
 venv/
 
-# Configuraciones de editor/IDE
+# Cachés de Python
+__pycache__/
+*.py[cod]
+
+# Configuración de editor
 .vscode/
 .idea/
 

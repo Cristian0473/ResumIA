@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Iniciar sesión</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/material-dashboard.css') }}">
+  <style>
+    .is-invalid { border: 2px solid red; }
+    .error-tooltip {
+      display: none;
+      position: absolute;
+      background-color: red;
+      color: white;
+      padding: 5px;
+      border-radius: 5px;
+      font-size: 12px;
+      z-index: 10;
+      transform: translate(10px, -30px);
+      white-space: nowrap;
+    }
+
+    #loading-screen {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: #0f313a;
+      display: flex; justify-content: center; align-items: center;
+      z-index: 9999; flex-direction: column;
+    }
+
+    .spinner {
+      width: 100px; height: 100px;
+      border: 10px solid rgba(255, 255, 255, 0.2);
+      border-top: 10px solid white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    p { font-size: 20px; font-weight: bold; color: white; margin-top: 10px; animation: blink 1.5s ease-in-out infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+    .card-body h4 {
+      font-weight: 600;
+    }
+
+    .register-link {
+      font-size: 14px;
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-200">
+  <main class="main-content mt-0">
+    <div class="page-header align-items-start min-vh-100" style="background-image: url('{{ url_for('static', filename='img/background.jpg') }}'); background-size: cover;">
+      <span class="mask bg-gradient-dark opacity-6"></span>
+      <div class="container my-auto">
+        <div class="row">
+          <div class="col-lg-4 col-md-6 col-12 mx-auto">
+            <div class="card z-index-0">
+              <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div style="height: 180px; display: flex; justify-content: center; align-items: center;">
+                  <img src="{{ url_for('static', filename='img/login_banner.jpg') }}" alt="login banner" class="w-100 border-radius-lg" style="height: 100%; object-fit: cover;">
+                </div>
+              </div>
+              <div class="card-body">
+                <h4 class="text-center mb-4">Iniciar sesión</h4>
+                <form action="{{ url_for('procesar_login') }}" method="post">
+                  <div class="input-group my-3 position-relative">
+                    <input type="email" class="form-control" name="correo" id="correo" placeholder="Correo electrónico" required>
+                  </div>
+                  <div class="input-group mb-3 position-relative">
+                    <input type="password" class="form-control" name="password" id="password" placeholder="Contraseña" required>
+                  </div>
+                  <div class="form-check text-start ps-0">
+                    <input class="form-check-input" type="checkbox" id="flexCheckDefault" checked>
+                    <label class="form-check-label" for="flexCheckDefault">Guardar credenciales</label>
+                  </div>
+                  <div class="text-center">
+                    <button type="submit" class="btn bg-gradient-primary text-white w-100 my-3">Ingresar</button>
+                    <a href="{{ url_for('form_registro') }}" class="register-link">¿No tienes cuenta? Regístrate aquí</a>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="loading-screen" style="display: none;">
+    <div class="spinner"></div>
+    <p>Cargando...</p>
+  </div>
+
+  <script>
+    const correoRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const passwordRegex = /^[a-zA-Z0-9]+$/;
+  
+    function mostrarError(input, mensaje) {
+      input.classList.add("is-invalid");
+      let existingTooltip = input.parentElement.querySelector(".error-tooltip");
+      if (existingTooltip) existingTooltip.remove();
+      let errorTooltip = document.createElement("div");
+      errorTooltip.className = "error-tooltip";
+      errorTooltip.innerText = mensaje;
+      input.parentElement.appendChild(errorTooltip);
+      errorTooltip.style.display = "block";
+    }
+  
+    function quitarError(input) {
+      input.classList.remove("is-invalid");
+      let errorTooltip = input.parentElement.querySelector(".error-tooltip");
+      if (errorTooltip) errorTooltip.remove();
+    }
+  
+    document.getElementById("correo").addEventListener("input", function () {
+      if (this.value === "") quitarError(this);
+      else if (!correoRegex.test(this.value)) mostrarError(this, "Ingresa un correo electrónico válido.");
+      else quitarError(this);
+    });
+  
+    document.getElementById("password").addEventListener("input", function () {
+      if (this.value === "") quitarError(this);
+      else if (!passwordRegex.test(this.value)) mostrarError(this, "La contraseña no debe contener signos especiales.");
+      else quitarError(this);
+    });
+  
+    const correoInput = document.getElementById('correo');
+    const passwordInput = document.getElementById('password');
+    const saveCredentialsCheckbox = document.getElementById('flexCheckDefault');
+  
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedCorreo = localStorage.getItem('savedCorreo');
+      const savedPassword = localStorage.getItem('savedPassword');
+      const saveCredentials = localStorage.getItem('saveCredentials') === 'true';
+      if (saveCredentials && savedCorreo && savedPassword) {
+        correoInput.value = savedCorreo;
+        passwordInput.value = savedPassword;
+        saveCredentialsCheckbox.checked = true;
+      }
+    });
+  
+    document.querySelector('form').addEventListener('submit', function () {
+      if (saveCredentialsCheckbox.checked) {
+        localStorage.setItem('savedCorreo', correoInput.value);
+        localStorage.setItem('savedPassword', passwordInput.value);
+        localStorage.setItem('saveCredentials', 'true');
+      } else {
+        localStorage.removeItem('savedCorreo');
+        localStorage.removeItem('savedPassword');
+        localStorage.setItem('saveCredentials', 'false');
+      }
+      document.getElementById('loading-screen').style.display = 'flex';
+    });
+  
+    window.addEventListener("pageshow", function (event) {
+      if (event.persisted) {
+        document.getElementById("loading-screen").style.display = "none";
+      }
+    });
+  </script>
+  
+</body>
+</html>

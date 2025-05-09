@@ -1,0 +1,12 @@
+# Entorno virtual
+.venv/
+env/
+venv/
+
+# Configuraciones de editor/IDE
+.vscode/
+.idea/
+
+# Archivos sensibles
+.env
+*.env

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registro de Usuario</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/material-dashboard.css') }}">
+  <style>
+    body {
+      background: linear-gradient(to right, #60a5fa, #2563eb);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .card {
+      background-color: white;
+      padding: 40px 30px;
+      border-radius: 16px;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 450px;
+    }
+
+    h4 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #1e3a8a;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: block;
+      color: #334155;
+    }
+
+    .form-control {
+      border-radius: 8px;
+      padding: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 1rem;
+    }
+
+    .btn-dark {
+      background-color: #1e3a8a;
+      border: none;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 8px;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-dark:hover {
+      background-color: #172554;
+    }
+
+    .btn-link {
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+      color: #2563eb;
+      font-size: 0.95rem;
+      text-decoration: none;
+    }
+
+    .btn-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h4>Registro de Usuario</h4>
+    <form action="{{ url_for('registrar_usuario') }}" method="post">
+      <div class="form-group mb-3">
+        <label for="correo">Correo electrónico</label>
+        <input type="email" name="correo" id="correo" required class="form-control">
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="nombre">Nombres</label>
+        <input type="text" name="nombre" id="nombre" required class="form-control">
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="apellido">Apellidos</label>
+        <input type="text" name="apellido" id="apellido" required class="form-control">
+      </div>
+
+      <div class="form-group mb-4">
+        <label for="password">Contraseña</label>
+        <input type="password" name="password" id="password" required class="form-control">
+      </div>
+
+      <div class="text-center">
+        <button class="btn btn-dark w-100" type="submit">Registrar</button>
+        <a href="{{ url_for('login') }}" class="btn-link">¿Ya tienes cuenta? Inicia sesión</a>
+      </div>
+    </form>
+  </div>
+</body>
+</html>
